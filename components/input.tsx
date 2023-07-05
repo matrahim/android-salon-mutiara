@@ -51,6 +51,7 @@ const Input = props => {
               props.setData(v);
             }}
             placeholder={props.nama}
+            keyboardType={props.type === 'num' ? 'numeric' : 'default'}
             borderBottomColor="#A8A8A8"
             borderBottomWidth={1}
             style={{
@@ -62,7 +63,8 @@ const Input = props => {
           />
         </View>
       )}
-      {props.iserror ? (
+
+      {props.isError || typeof props.isError === 'string' ? (
         <Text
           style={{
             textAlign: 'center',
@@ -70,7 +72,8 @@ const Input = props => {
             marginTop: 5,
             color: '#FE6D47',
           }}>
-          {props.nama} Tidak Valid !!
+          {props.nama}{' '}
+          {typeof props.isError === 'string' ? props.isError : 'Tidak Valid'} !!
         </Text>
       ) : (
         ''

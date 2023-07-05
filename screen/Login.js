@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import axios from 'axios';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Logo from '../components/logo';
 import Input from '../components/input';
 function Login({navigation}) {
@@ -12,6 +12,17 @@ function Login({navigation}) {
   const [loading, setLoading] = useState(false);
   const [kesalahan, setKesalahan] = useState();
   const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    cekForm(email, password);
+  }, [email, password]);
+  const cekForm = (e, p) => {
+    if (e === undefined || p === undefined) {
+      setActive(false);
+    } else {
+      setActive(true);
+    }
+  };
 
   function cekLogin(e, p) {
     return axios
@@ -25,11 +36,12 @@ function Login({navigation}) {
       .then(response => {
         if (response.data.payload.datas.length === 0) {
           setLoading(false);
-          setActive(false);
+          setActive(true);
           setKesalahan(true);
           return undefined;
         } else {
           setKesalahan(false);
+          setActive(false);
           setTimeout(() => {
             navigation.reset({
               index: 0,
@@ -76,8 +88,7 @@ function Login({navigation}) {
         isErorr={false}
         isPassword={false}
         setData={v => {
-          setEmail(v);
-          password !== undefined ? setActive(true) : '';
+          setEmail(v === '' ? undefined : v);
         }}
       />
       <Input
@@ -89,16 +100,16 @@ function Login({navigation}) {
           setSetShowPass(v);
         }}
         setData={v => {
-          setPassword(v);
-          email !== undefined ? setActive(true) : '';
+          setPassword(v === '' ? undefined : v);
         }}
       />
 
       <TouchableOpacity
         disabled={!active}
         onPress={() => {
+          setKesalahan();
           setLoading(true);
-          setActive(true);
+          setActive(false);
           cekLogin(email, password);
         }}>
         <View
