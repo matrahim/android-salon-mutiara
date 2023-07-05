@@ -24,6 +24,17 @@ function getDataHairStyle() {
       throw error;
     });
 }
+function getDataLayanan() {
+  return axios
+    .get('https://api-salon-hijrah.vercel.app/layanan')
+    .then(response => {
+      return response.data.payload.datas;
+    })
+    .catch(error => {
+      console.error(error);
+      throw error;
+    });
+}
 function getDataBooking(id) {
   return axios
     .get('https://api-salon-hijrah.vercel.app/findBooking?id=' + id)
@@ -74,6 +85,7 @@ function App({navigation}) {
   const [waktu, setWaktu] = useState();
   const [hairStyleList, setHairStyleList] = useState();
   const [mapHairstyle, setMapHairstyle] = useState();
+  const [mapLayanan, setMapLayanan] = useState();
   const [disableHairStyle, setDisableHairStyle] = useState([]);
   const [disableAll, setDisableAll] = useState(true);
   const [riwayat, setRiwayat] = useState([]);
@@ -85,8 +97,10 @@ function App({navigation}) {
     const fetchData = async () => {
       try {
         const responseData = await getDataHairStyle();
+        const responseDataLayanan = await getDataLayanan();
 
         setMapHairstyle(responseData);
+        setMapLayanan(responseDataLayanan);
       } catch (error) {
         console.log(error);
       }
@@ -158,6 +172,7 @@ function App({navigation}) {
     setRiwayat(responseData);
     setIsLoadingRiwayat(false);
   }
+  console.log(mapLayanan);
   return (
     <ScrollView style={{marginVertical: 10}}>
       <Text
@@ -200,7 +215,21 @@ function App({navigation}) {
       <View>
         <Label name={'Layanan Kami'}></Label>
         <ScrollView horizontal>
-          <LayananCard></LayananCard>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginLeft: 5,
+              marginRight: 5,
+              flex: 1,
+            }}>
+            {mapLayanan &&
+              mapLayanan.map(item => {
+                // eslint-disable-next-line no-lone-blocks
+                {
+                  return <LayananCard img={item.img} />;
+                }
+              })}
+          </View>
         </ScrollView>
       </View>
       <View>
@@ -239,7 +268,6 @@ function App({navigation}) {
               if (disableHairStyle.includes(item.id_hairstylist)) {
                 return null;
               }
-
               return (
                 // =============== PERULANGAN DATA HAIRSPESIALIST
                 <HairSpecialistCard

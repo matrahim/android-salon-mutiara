@@ -1,37 +1,15 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react-native/no-inline-styles */
-import {View, Image, StyleSheet} from 'react-native';
-const LayananCard = () => {
+import {Image, StyleSheet} from 'react-native';
+const LayananCard = props => {
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        marginLeft: 5,
-        marginRight: 5,
-        flex: 1,
-      }}>
-      <Image
-        source={{
-          uri: 'https://www.dewimagazine.com/img/images/WEB%203.jpg',
-        }}
-        style={styles.layanan}
-        resizeMode="cover"
-      />
-      <Image
-        source={{
-          uri: 'https://www.dewimagazine.com/img/images/WEB%203.jpg',
-        }}
-        style={styles.layanan}
-        resizeMode="cover"
-      />
-      <Image
-        source={{
-          uri: 'https://www.dewimagazine.com/img/images/WEB%203.jpg',
-        }}
-        style={styles.layanan}
-        resizeMode="cover"
-      />
-    </View>
+    <Image
+      source={{
+        uri: props.img,
+      }}
+      style={styles.layanan}
+      resizeMode="cover"
+    />
   );
 };
 
