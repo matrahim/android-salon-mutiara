@@ -172,7 +172,6 @@ function App({navigation}) {
     setRiwayat(responseData);
     setIsLoadingRiwayat(false);
   }
-  console.log(mapLayanan);
   return (
     <ScrollView style={{marginVertical: 10}}>
       <Text
@@ -226,7 +225,7 @@ function App({navigation}) {
               mapLayanan.map(item => {
                 // eslint-disable-next-line no-lone-blocks
                 {
-                  return <LayananCard img={item.img} />;
+                  return <LayananCard key={item.id_layanan} img={item.img} />;
                 }
               })}
           </View>
