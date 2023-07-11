@@ -106,7 +106,7 @@ function InputDate(props) {
       {/* <Button title="Open" style={styles.input} /> */}
       <DatePicker
         modal
-        minimumDate={getFormatMinimal(getMinumum())}
+        minimumDate={props.role !== 1 ? getFormatMinimal(getMinumum()) : null}
         // maximumDate={}
         mode="date"
         theme="dark"

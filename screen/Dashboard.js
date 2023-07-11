@@ -46,6 +46,17 @@ function getDataBooking(id) {
       throw error;
     });
 }
+function getDataBookByDate(d) {
+  return axios
+    .get(`https://api-salon-hijrah.vercel.app/booking?tanggal="${d}"`)
+    .then(response => {
+      return response.data.payload.datas;
+    })
+    .catch(error => {
+      console.error(error.message);
+      throw error;
+    });
+}
 
 const postBooking = async (t, w, h, u) => {
   try {
@@ -94,6 +105,10 @@ function App({navigation}) {
   const data = route.params[0]; // Mendapatkan data yang dikirim
   useEffect(() => {
     setUser(data.id_user);
+    // if (data.role === 1) {
+    //   setTanggal(new Date());
+    // }
+
     const fetchData = async () => {
       try {
         const responseData = await getDataHairStyle();
@@ -108,7 +123,15 @@ function App({navigation}) {
     const fetchDataBooking = async () => {
       try {
         const responseData = await getDataBooking(user);
-
+        setRiwayat(responseData);
+        setIsLoadingRiwayat(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchDataBookingByDate = async () => {
+      try {
+        const responseData = await getDataBookByDate(getDateFormat(tanggal));
         setRiwayat(responseData);
         setIsLoadingRiwayat(false);
       } catch (error) {
@@ -116,8 +139,12 @@ function App({navigation}) {
       }
     };
     fetchData();
-    fetchDataBooking();
-  }, [data.id_user, user]);
+    if (data.role === 1) {
+      fetchDataBookingByDate();
+    } else {
+      fetchDataBooking();
+    }
+  }, [data.id_user, data.role, user, tanggal]);
   function clearAll() {
     setTanggal(undefined);
     setWaktu(undefined);
@@ -166,143 +193,72 @@ function App({navigation}) {
   async function refreshRiwayat(u) {
     // Lakukan logika untuk merefresh riwayat, misalnya melakukan pemanggilan API
     // Setelah berhasil mendapatkan riwayat terbaru, update state riwayat
-    getDataBooking(u);
-    const responseData = await getDataBooking(u);
-
+    // getDataBooking(u);
+    console.log(u);
+    let responseData = '';
+    if (data.role === 1) {
+      responseData = await getDataBookByDate(u);
+    } else {
+      responseData = await getDataBooking(u);
+    }
     setRiwayat(responseData);
+
     setIsLoadingRiwayat(false);
   }
-  return (
-    <ScrollView style={{marginVertical: 10}}>
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Italic',
-          fontSize: 14,
-          color: '#FE774F',
-          textAlign: 'center',
-        }}>
-        Selamat Datang {data.nama.toUpperCase()}
-      </Text>
-      <View style={{alignItems: 'center', marginTop: 10}}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{name: 'Login'}],
-            });
-          }}
+
+  if (data.role === 1) {
+    return (
+      <ScrollView>
+        <Text
           style={{
-            padding: 3,
-            borderRadius: 10,
-            backgroundColor: '#FE774F',
-            shadowColor: '#000',
-            width: 100,
-            height: 30,
-            justifyContent: 'center',
+            fontFamily: 'Montserrat-Italic',
+            fontSize: 14,
+            color: '#FE774F',
+            textAlign: 'center',
+            marginTop: 10,
           }}>
-          <Text
+          Selamat Datang {data.nama.toUpperCase()}
+        </Text>
+        <View style={{alignItems: 'center', marginTop: 10}}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{name: 'Login'}],
+              });
+            }}
             style={{
-              textAlign: 'center',
-              fontFamily: 'Montserrat-Bold',
-              fontSize: 12,
-              color: 'white',
+              padding: 3,
+              borderRadius: 10,
+              backgroundColor: '#FE774F',
+              shadowColor: '#000',
+              width: 100,
+              height: 30,
+              justifyContent: 'center',
             }}>
-            Log-Out
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <Label name={'Layanan Kami'}></Label>
-        <ScrollView horizontal>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginLeft: 5,
-              marginRight: 5,
-              flex: 1,
-            }}>
-            {mapLayanan &&
-              mapLayanan.map(item => {
-                // eslint-disable-next-line no-lone-blocks
-                {
-                  return <LayananCard key={item.id_layanan} img={item.img} />;
-                }
-              })}
-          </View>
-        </ScrollView>
-      </View>
-      <View>
-        <Label name={'Pilih Tanggal'}></Label>
-        <InputDate
-          tgl={tanggal}
-          setTanggal={v => {
-            setWaktu(undefined);
-            setTanggal(v);
-            cekHairStyle(v, waktu);
-            cekHairStyleDisable(v, waktu);
-          }}></InputDate>
-      </View>
-      <View>
-        <Label name={'Pilih Jam'}></Label>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            flexWrap: 'wrap',
-          }}></View>
-        <InputTime
-          tgl={tanggal}
-          waktu={waktu}
-          setWaktu={v => {
-            setWaktu(v);
-            cekHairStyle(tanggal, v);
-            cekHairStyleDisable(tanggal, v);
-          }}></InputTime>
-      </View>
-      <View>
-        <Label name={'Pilih Hair Specialist'}></Label>
-        <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-          {mapHairstyle &&
-            mapHairstyle.map(item => {
-              if (disableHairStyle.includes(item.id_hairstylist)) {
-                return null;
-              }
-              return (
-                // =============== PERULANGAN DATA HAIRSPESIALIST
-                <HairSpecialistCard
-                  disable={disableHairStyle.includes(item.id_hairstylist)}
-                  key={item.id_hairstylist}
-                  id_hairstylist={item.id_hairstylist}
-                  disableAll={disableAll}
-                  hairStyleList={hairStyleList}
-                  getData={v => {
-                    setHairStyleList(v);
-                  }}
-                  name={item.nama}
-                  url={item.url}></HairSpecialistCard>
-                // ===============
-              );
-            })}
+            <Text
+              style={{
+                textAlign: 'center',
+                fontFamily: 'Montserrat-Bold',
+                fontSize: 12,
+                color: 'white',
+              }}>
+              Log-Out
+            </Text>
+          </TouchableOpacity>
         </View>
-      </View>
-
-      <Tombol
-        waktu={waktu}
-        tanggal={tanggal}
-        hairstyle={hairStyleList}
-        postBooking={() => {
-          setIsLoadingRiwayat(true);
-
-          if (postBooking(tanggal, waktu, hairStyleList, user)) {
-            clearAll();
-            refreshRiwayat(user);
-          } else {
-            console.log('error');
-          }
-        }}></Tombol>
-      <View>
-        <Label name={'Riwayat Booking'}></Label>
-        <ScrollView>
+        <View>
+          <Label name={'Pilih Tanggal'}></Label>
+          <InputDate
+            role={data.role}
+            tgl={tanggal}
+            setTanggal={v => {
+              setIsLoadingRiwayat(true);
+              setTanggal(v);
+            }}></InputDate>
+        </View>
+        <View>
+          <Label name={'Riwayat Booking'}></Label>
           <View style={{alignItems: 'center'}}>
             {isLoadingRiwayat ? (
               <Text>Loading...</Text>
@@ -320,12 +276,165 @@ function App({navigation}) {
               })
             )}
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
+    );
+  } else {
+    return (
+      <ScrollView style={{marginVertical: 10}}>
+        <Text
+          style={{
+            fontFamily: 'Montserrat-Italic',
+            fontSize: 14,
+            color: '#FE774F',
+            textAlign: 'center',
+          }}>
+          Selamat Datang {data.nama.toUpperCase()}
+        </Text>
+        <View style={{alignItems: 'center', marginTop: 10}}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{name: 'Login'}],
+              });
+            }}
+            style={{
+              padding: 3,
+              borderRadius: 10,
+              backgroundColor: '#FE774F',
+              shadowColor: '#000',
+              width: 100,
+              height: 30,
+              justifyContent: 'center',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontFamily: 'Montserrat-Bold',
+                fontSize: 12,
+                color: 'white',
+              }}>
+              Log-Out
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <Label name={'Layanan Kami'}></Label>
+          <ScrollView horizontal>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginLeft: 5,
+                marginRight: 5,
+                flex: 1,
+              }}>
+              {mapLayanan &&
+                mapLayanan.map(item => {
+                  // eslint-disable-next-line no-lone-blocks
+                  {
+                    return <LayananCard key={item.id_layanan} img={item.img} />;
+                  }
+                })}
+            </View>
+          </ScrollView>
+        </View>
+        <View>
+          <Label name={'Pilih Tanggal'}></Label>
+          <InputDate
+            tgl={tanggal}
+            setTanggal={v => {
+              setWaktu(undefined);
+              setTanggal(v);
+              cekHairStyle(v, waktu);
+              cekHairStyleDisable(v, waktu);
+            }}></InputDate>
+        </View>
+        <View>
+          <Label name={'Pilih Jam'}></Label>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              flexWrap: 'wrap',
+            }}></View>
+          <InputTime
+            tgl={tanggal}
+            waktu={waktu}
+            setWaktu={v => {
+              setWaktu(v);
+              cekHairStyle(tanggal, v);
+              cekHairStyleDisable(tanggal, v);
+            }}></InputTime>
+        </View>
+        <View>
+          <Label name={'Pilih Hair Specialist'}></Label>
+          <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+            {mapHairstyle &&
+              mapHairstyle.map(item => {
+                if (disableHairStyle.includes(item.id_hairstylist)) {
+                  return null;
+                }
+                return (
+                  // =============== PERULANGAN DATA HAIRSPESIALIST
+                  <HairSpecialistCard
+                    disable={disableHairStyle.includes(item.id_hairstylist)}
+                    key={item.id_hairstylist}
+                    id_hairstylist={item.id_hairstylist}
+                    disableAll={disableAll}
+                    hairStyleList={hairStyleList}
+                    getData={v => {
+                      setHairStyleList(v);
+                    }}
+                    name={item.nama}
+                    url={item.url}></HairSpecialistCard>
+                  // ===============
+                );
+              })}
+          </View>
+        </View>
 
-      {/* {data && <Text>Data dari API: {data[1].hair_spesialis}</Text>} */}
-    </ScrollView>
-  );
+        <Tombol
+          waktu={waktu}
+          tanggal={tanggal}
+          hairstyle={hairStyleList}
+          postBooking={() => {
+            setIsLoadingRiwayat(true);
+
+            if (postBooking(tanggal, waktu, hairStyleList, user)) {
+              clearAll();
+              refreshRiwayat(user);
+            } else {
+              console.log('error');
+            }
+          }}></Tombol>
+        <View>
+          <Label name={'Riwayat Booking'}></Label>
+          <ScrollView>
+            <View style={{alignItems: 'center'}}>
+              {isLoadingRiwayat ? (
+                <Text>Loading...</Text>
+              ) : (
+                riwayat &&
+                riwayat.map(item => {
+                  return (
+                    <RiwayatCard
+                      key={item.id_booking}
+                      url={item.url}
+                      nama={item.nama}
+                      tanggal={item.tanggal}
+                      waktu={item.waktu}></RiwayatCard>
+                  );
+                })
+              )}
+            </View>
+          </ScrollView>
+        </View>
+
+        {/* {data && <Text>Data dari API: {data[1].hair_spesialis}</Text>} */}
+      </ScrollView>
+    );
+  }
 }
 
 export default App;

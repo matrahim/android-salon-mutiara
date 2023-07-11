@@ -4,7 +4,7 @@ function Logo() {
   return (
     <View style={styles.container}>
       <Text style={styles.logo1}>SALON</Text>
-      <Text style={styles.logo2}>Hijrah</Text>
+      <Text style={styles.logo2}>Mutiara</Text>
     </View>
   );
 }
