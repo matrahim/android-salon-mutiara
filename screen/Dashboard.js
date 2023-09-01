@@ -333,7 +333,13 @@ function App({navigation}) {
                 mapLayanan.map(item => {
                   // eslint-disable-next-line no-lone-blocks
                   {
-                    return <LayananCard key={item.id_layanan} img={item.img} />;
+                    return (
+                      <LayananCard
+                        key={item.id_layanan}
+                        layanan={item.layanan}
+                        img={item.img}
+                      />
+                    );
                   }
                 })}
             </View>
