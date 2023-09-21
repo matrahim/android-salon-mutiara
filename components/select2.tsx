@@ -36,8 +36,8 @@ const Select2 = props => {
     fetchData();
     props.setData(value);
     // console.log(props.nilai);
-    props.nilai == null ? setValue(null) : null;
-  }, [props, value]);
+    props.nilai ? setValue(null) : null;
+  }, [props, value, props.nilai]);
 
   return (
     <View>

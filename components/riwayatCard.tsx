@@ -88,14 +88,14 @@ function RiwayatCard(props) {
           justifyContent: 'center',
           // alignItems: 'center',
         }}>
-        <Text style={{fontFamily: 'Montserrat-Medium', fontSize: 12}}>
+        <Text style={{fontFamily: 'Montserrat-Medium', fontSize: 8}}>
           {getDateFormat(props.tanggal)}
         </Text>
         <Text
           style={{
             fontFamily: 'Montserrat-Medium',
-            fontSize: 10,
-            marginTop: 5,
+            fontSize: 8,
+            // marginTop: 5,
           }}>
           {props.waktu}
         </Text>
@@ -103,7 +103,7 @@ function RiwayatCard(props) {
           style={{
             fontFamily: 'Montserrat-Medium',
             fontSize: 10,
-            marginTop: 5,
+            // marginTop: 5,
           }}>
           {props.layanan}
         </Text>

@@ -70,6 +70,7 @@ const postBooking = async (t, w, h, u, l) => {
         hour12: false,
       }),
       id_hairstylist: h.id,
+      id_layanan: l,
     };
 
     const response = await axios.post(
@@ -96,6 +97,7 @@ function App({navigation}) {
   const [tanggal, setTanggal] = useState();
   const [waktu, setWaktu] = useState();
   const [layanan, setLayanan] = useState();
+  const [layananNull, setLayananNull] = useState(true);
   const [hairStyleList, setHairStyleList] = useState();
   const [mapHairstyle, setMapHairstyle] = useState();
   const [mapLayanan, setMapLayanan] = useState();
@@ -150,7 +152,7 @@ function App({navigation}) {
   function clearAll() {
     setTanggal(undefined);
     setWaktu(undefined);
-    setLayanan(null);
+    setLayananNull(true);
     cekHairStyle(tanggal, waktu);
   }
   function cekHairStyleDisable(t, w) {
@@ -386,9 +388,10 @@ function App({navigation}) {
               flexWrap: 'wrap',
             }}></View>
           <Dropdown
-            nilai={layanan}
+            nilai={layananNull}
             setData={v => {
               setLayanan(v);
+              setLayananNull(false);
             }}
           />
         </View>
