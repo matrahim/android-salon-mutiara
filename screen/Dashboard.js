@@ -12,6 +12,7 @@ import Tombol from '../components/button';
 import Label from '../components/label';
 import InputDate from '../components/inputDate';
 import InputTime from '../components/inputTime';
+import Dropdown from '../components/select2';
 
 function getDataHairStyle() {
   return axios
@@ -58,7 +59,7 @@ function getDataBookByDate(d) {
     });
 }
 
-const postBooking = async (t, w, h, u) => {
+const postBooking = async (t, w, h, u, l) => {
   try {
     const data = {
       id_user: u,
@@ -94,6 +95,7 @@ function App({navigation}) {
   const [user, setUser] = useState();
   const [tanggal, setTanggal] = useState();
   const [waktu, setWaktu] = useState();
+  const [layanan, setLayanan] = useState();
   const [hairStyleList, setHairStyleList] = useState();
   const [mapHairstyle, setMapHairstyle] = useState();
   const [mapLayanan, setMapLayanan] = useState();
@@ -144,10 +146,11 @@ function App({navigation}) {
     } else {
       fetchDataBooking();
     }
-  }, [data.id_user, data.role, user, tanggal]);
+  }, [data.id_user, data.role, user, tanggal, layanan]);
   function clearAll() {
     setTanggal(undefined);
     setWaktu(undefined);
+    setLayanan(null);
     cekHairStyle(tanggal, waktu);
   }
   function cekHairStyleDisable(t, w) {
@@ -271,7 +274,8 @@ function App({navigation}) {
                     url={item.url}
                     nama={item.nama}
                     tanggal={item.tanggal}
-                    waktu={item.waktu}></RiwayatCard>
+                    waktu={item.waktu}
+                    layanan={item.layanan}></RiwayatCard>
                 );
               })
             )}
@@ -374,6 +378,21 @@ function App({navigation}) {
             }}></InputTime>
         </View>
         <View>
+          <Label name={'Pilih Layanan'}></Label>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              flexWrap: 'wrap',
+            }}></View>
+          <Dropdown
+            nilai={layanan}
+            setData={v => {
+              setLayanan(v);
+            }}
+          />
+        </View>
+        <View>
           <Label name={'Pilih Hair Specialist'}></Label>
           <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
             {mapHairstyle &&
@@ -407,7 +426,7 @@ function App({navigation}) {
           postBooking={() => {
             setIsLoadingRiwayat(true);
 
-            if (postBooking(tanggal, waktu, hairStyleList, user)) {
+            if (postBooking(tanggal, waktu, hairStyleList, user, layanan)) {
               clearAll();
               refreshRiwayat(user);
             } else {
@@ -429,7 +448,8 @@ function App({navigation}) {
                       url={item.url}
                       nama={item.nama}
                       tanggal={item.tanggal}
-                      waktu={item.waktu}></RiwayatCard>
+                      waktu={item.waktu}
+                      layanan={item.layanan}></RiwayatCard>
                   );
                 })
               )}

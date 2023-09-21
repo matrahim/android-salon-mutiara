@@ -99,6 +99,14 @@ function RiwayatCard(props) {
           }}>
           {props.waktu}
         </Text>
+        <Text
+          style={{
+            fontFamily: 'Montserrat-Medium',
+            fontSize: 10,
+            marginTop: 5,
+          }}>
+          {props.layanan}
+        </Text>
       </View>
       <View
         style={{
