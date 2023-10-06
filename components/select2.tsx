@@ -26,7 +26,7 @@ const Select2 = props => {
         const responseDataLayanan = await getDataLayanan();
         const res = responseDataLayanan.map(item => ({
           label: `${item.id_layanan}`,
-          value: `${item.layanan}`,
+          value: `${item.layanan2}`,
         }));
         setDatas(res);
       } catch (error) {

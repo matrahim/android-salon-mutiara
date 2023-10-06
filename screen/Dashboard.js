@@ -277,7 +277,7 @@ function App({navigation}) {
                     nama={item.nama}
                     tanggal={item.tanggal}
                     waktu={item.waktu}
-                    layanan={item.layanan}></RiwayatCard>
+                    layanan={item.layanan2}></RiwayatCard>
                 );
               })
             )}
@@ -452,7 +452,7 @@ function App({navigation}) {
                       nama={item.nama}
                       tanggal={item.tanggal}
                       waktu={item.waktu}
-                      layanan={item.layanan}></RiwayatCard>
+                      layanan={item.layanan2}></RiwayatCard>
                   );
                 })
               )}
